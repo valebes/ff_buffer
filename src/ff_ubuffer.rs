@@ -58,7 +58,6 @@ impl<T> FFUnbaundedBuffer<T> {
     }
     pub fn is_empty(&self) -> bool {
             let res = unsafe {
-            let el_void = el_ptr as *mut c_void;
             ffubuffer_empty(self.c_ref)
         };
         return res;      
