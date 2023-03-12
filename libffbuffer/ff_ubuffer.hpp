@@ -9,5 +9,5 @@ void *ffubuffer_build(uint64_t size);
 void ffubuffer_destroy(void *buffer);
 bool ffubuffer_push(void *buffer, void *element);
 void *ffubuffer_pop(void *buffer);
-bool ffubuffer_empty();
+bool ffubuffer_empty(void *buffer);
 }
