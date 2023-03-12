@@ -18,7 +18,7 @@ void *ffubuffer_pop(void *buffer) {
   return ret ? element : NULL;
 }
   
-void ffubuffer_empty(void *buffer) {
+bool ffubuffer_empty(void *buffer) {
   return ((ffubuffer *)buffer)->empty();
 }
 }
