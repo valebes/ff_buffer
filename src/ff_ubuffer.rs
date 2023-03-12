@@ -7,6 +7,7 @@ extern "C" {
     fn ffubuffer_destroy(buffer: *mut c_void);
     fn ffubuffer_push(buffer: *mut c_void, element: *mut c_void) -> bool;
     fn ffubuffer_pop(buffer: *mut c_void) -> *mut c_void;
+    fn ffubuffer_empty(buffer: *mut c_void) -> bool;
 }
 
 pub struct FFUnbaundedBuffer<T> {
@@ -54,5 +55,12 @@ impl<T> FFUnbaundedBuffer<T> {
             let el_ptr = el_void as *mut T;
             Some(Box::from_raw(el_ptr))
         }
+    }
+    pub fn is_empty(&self) -> bool {
+            let res = unsafe {
+            let el_void = el_ptr as *mut c_void;
+            ffubuffer_empty(self.c_ref)
+        };
+        return res;      
     }
 }
