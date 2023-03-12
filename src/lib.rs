@@ -38,6 +38,9 @@ impl<T> FFReceiver<T> {
     pub fn iter(&self) -> FFReceiverIter<'_, T> {
         FFReceiverIter { rx: self }
     }
+    pub fn is_empty(&self) -> bool {
+        self.queue.is_empty()
+    }
 }
 
 pub struct FFReceiverIter<'a, T: 'a> {
