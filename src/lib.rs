@@ -1,21 +1,21 @@
 mod ff_ubuffer;
 
-use crate::ff_ubuffer::FFUnbaundedBuffer;
+use crate::ff_ubuffer::FFUnboundedBuffer;
 use std::sync::Arc;
 
 const BUFFER_SECTION_SIZE: u64 = 2048;
 
 pub fn build<T>() -> (FFSender<T>, FFReceiver<T>) {
-    let a = Arc::new(FFUnbaundedBuffer::<T>::new(BUFFER_SECTION_SIZE));
+    let a = Arc::new(FFUnboundedBuffer::<T>::new(BUFFER_SECTION_SIZE));
     (FFSender { queue: a.clone() }, FFReceiver { queue: a })
 }
 
 pub struct FFSender<T> {
-    queue: Arc<FFUnbaundedBuffer<T>>,
+    queue: Arc<FFUnboundedBuffer<T>>,
 }
 
 pub struct FFReceiver<T> {
-    queue: Arc<FFUnbaundedBuffer<T>>,
+    queue: Arc<FFUnboundedBuffer<T>>,
 }
 
 impl<T> FFSender<T> {
