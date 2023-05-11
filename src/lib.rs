@@ -1,14 +1,23 @@
 mod ff_ubuffer;
 
 use crate::ff_ubuffer::FFUnboundedBuffer;
-use std::{sync::{Arc, atomic::AtomicBool}, os::macos::raw::stat};
+use std::sync::{atomic::AtomicBool, Arc};
 
 const BUFFER_SECTION_SIZE: u64 = 2048;
 
 pub fn build<T>() -> (FFSender<T>, FFReceiver<T>) {
     let a = Arc::new(FFUnboundedBuffer::<T>::new(BUFFER_SECTION_SIZE));
     let status = Arc::new(AtomicBool::new(false));
-    (FFSender { queue: a.clone(), status: status.clone() }, FFReceiver { queue: a, sender_status: status })
+    (
+        FFSender {
+            queue: a.clone(),
+            status: status.clone(),
+        },
+        FFReceiver {
+            queue: a,
+            sender_status: status,
+        },
+    )
 }
 
 pub struct FFSender<T> {
@@ -29,7 +38,8 @@ impl<T> FFSender<T> {
 
 impl<T> Drop for FFSender<T> {
     fn drop(&mut self) {
-        self.status.store(true, std::sync::atomic::Ordering::Release);
+        self.status
+            .store(true, std::sync::atomic::Ordering::Release);
     }
 }
 
@@ -38,7 +48,10 @@ impl<T> FFReceiver<T> {
         loop {
             if let Some(el) = self.queue.pop() {
                 return Some(el);
-            } else if self.sender_status.load(std::sync::atomic::Ordering::Acquire) {
+            } else if self
+                .sender_status
+                .load(std::sync::atomic::Ordering::Acquire)
+            {
                 return None;
             }
             std::thread::yield_now();

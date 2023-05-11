@@ -57,9 +57,6 @@ impl<T> FFUnboundedBuffer<T> {
         }
     }
     pub fn is_empty(&self) -> bool {
-            let res = unsafe {
-            ffubuffer_empty(self.c_ref)
-        };
-        return res;      
+        unsafe { ffubuffer_empty(self.c_ref) }
     }
 }

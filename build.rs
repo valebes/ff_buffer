@@ -15,7 +15,7 @@ fn get_ff_path() -> Option<String> {
             return Some(String::from(s));
         }
     }
-    return None;
+    None
 }
 
 fn main() {
@@ -45,8 +45,7 @@ fn main() {
 
     // optinal cross language feature
     if cfg!(feature = "crosslto") {
-        build.flag("-flto=thin")
-             .compiler("clang");
+        build.flag("-flto=thin").compiler("clang");
     }
 
     // comnpile c++ library

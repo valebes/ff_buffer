@@ -17,7 +17,7 @@ fn producer_consumer_rust(n: u64) {
     let t2 = thread::spawn(move || {
         let mut count: i64 = 0;
         for el in r.iter() {
-            if let None = *el {
+            if el.is_none() {
                 break;
             }
             count += (*el).unwrap();

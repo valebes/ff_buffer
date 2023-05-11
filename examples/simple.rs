@@ -1,5 +1,3 @@
-use ff_buffer;
-
 fn main() {
     let (s, r) = ff_buffer::build::<&str>();
 

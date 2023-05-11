@@ -14,7 +14,7 @@ fn push_pop_rust(n: u64) {
     s.push(Box::new(None));
     let mut count = 0;
     for el in r.iter() {
-        if let None = *el {
+        if el.is_none() {
             break;
         }
         count += (*el).unwrap();
