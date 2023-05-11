@@ -1,21 +1,24 @@
 mod ff_ubuffer;
 
 use crate::ff_ubuffer::FFUnboundedBuffer;
-use std::sync::Arc;
+use std::{sync::{Arc, atomic::AtomicBool}, os::macos::raw::stat};
 
 const BUFFER_SECTION_SIZE: u64 = 2048;
 
 pub fn build<T>() -> (FFSender<T>, FFReceiver<T>) {
     let a = Arc::new(FFUnboundedBuffer::<T>::new(BUFFER_SECTION_SIZE));
-    (FFSender { queue: a.clone() }, FFReceiver { queue: a })
+    let status = Arc::new(AtomicBool::new(false));
+    (FFSender { queue: a.clone(), status: status.clone() }, FFReceiver { queue: a, sender_status: status })
 }
 
 pub struct FFSender<T> {
     queue: Arc<FFUnboundedBuffer<T>>,
+    status: Arc<AtomicBool>,
 }
 
 pub struct FFReceiver<T> {
     queue: Arc<FFUnboundedBuffer<T>>,
+    sender_status: Arc<AtomicBool>,
 }
 
 impl<T> FFSender<T> {
@@ -24,12 +27,21 @@ impl<T> FFSender<T> {
     }
 }
 
+impl<T> Drop for FFSender<T> {
+    fn drop(&mut self) {
+        self.status.store(true, std::sync::atomic::Ordering::Release);
+    }
+}
+
 impl<T> FFReceiver<T> {
-    pub fn pop(&self) -> Box<T> {
+    pub fn pop(&self) -> Option<Box<T>> {
         loop {
             if let Some(el) = self.queue.pop() {
-                return el;
+                return Some(el);
+            } else if self.sender_status.load(std::sync::atomic::Ordering::Acquire) {
+                return None;
             }
+            std::thread::yield_now();
         }
     }
     pub fn try_pop(&self) -> Option<Box<T>> {
@@ -50,6 +62,6 @@ pub struct FFReceiverIter<'a, T: 'a> {
 impl<'a, T> Iterator for FFReceiverIter<'a, T> {
     type Item = Box<T>;
     fn next(&mut self) -> Option<Box<T>> {
-        Some(self.rx.pop())
+        self.rx.pop()
     }
 }

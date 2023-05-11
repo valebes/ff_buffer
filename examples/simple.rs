@@ -11,9 +11,9 @@ fn main() {
     println!("send: '{}'", *el);
     s.push(el);
 
-    let el = r.pop();
+    let el = r.pop().unwrap();
     println!("receive: '{}'", *el);
 
-    let el = r.pop();
+    let el = r.pop().unwrap();
     println!("receive: '{}'", *el);
 }
