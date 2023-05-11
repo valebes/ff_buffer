@@ -10,26 +10,26 @@ extern "C" {
     fn ffubuffer_empty(buffer: *mut c_void) -> bool;
 }
 
-pub struct FFUnbaundedBuffer<T> {
+pub struct FFUnboundedBuffer<T> {
     c_ref: *mut c_void,
     phantom: PhantomData<T>,
 }
-unsafe impl<T> Send for FFUnbaundedBuffer<T> {}
-unsafe impl<T> Sync for FFUnbaundedBuffer<T> {}
+unsafe impl<T> Send for FFUnboundedBuffer<T> {}
+unsafe impl<T> Sync for FFUnboundedBuffer<T> {}
 
-impl<T> Drop for FFUnbaundedBuffer<T> {
+impl<T> Drop for FFUnboundedBuffer<T> {
     fn drop(&mut self) {
         unsafe { ffubuffer_destroy(self.c_ref) };
     }
 }
 
-impl<T> FFUnbaundedBuffer<T> {
-    pub fn new(size: u64) -> FFUnbaundedBuffer<T> {
+impl<T> FFUnboundedBuffer<T> {
+    pub fn new(size: u64) -> FFUnboundedBuffer<T> {
         let c_queue = unsafe { ffubuffer_build(size) };
         if c_queue.is_null() {
-            panic!("Cannot create FFUnbaundedBuffer!");
+            panic!("Cannot create FFUnboundedBuffer!");
         }
-        FFUnbaundedBuffer {
+        FFUnboundedBuffer {
             c_ref: c_queue,
             phantom: PhantomData,
         }
