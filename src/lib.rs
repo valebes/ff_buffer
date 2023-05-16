@@ -66,6 +66,10 @@ impl<T> FFReceiver<T> {
     pub fn is_empty(&self) -> bool {
         self.queue.is_empty()
     }
+    pub fn is_disconnected(&self) -> bool {
+        self.sender_status
+            .load(std::sync::atomic::Ordering::Acquire)
+    }
 }
 
 pub struct FFReceiverIter<'a, T: 'a> {
