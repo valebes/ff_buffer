@@ -1,5 +1,6 @@
 [package]
 name = "ff_buffer"
+description = "A fork of ff_buffer that provides FastFlow channels on Rust."
 version = "0.1.0"
 authors = ["Luca Rinaldi <to@lucar.in>", "Valerio Besozzi"]
 edition = "2021"
